@@ -1,93 +1,63 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.github.stefvanschie.inventoryframework</groupId>
     <artifactId>IF-Lite</artifactId>
-    <version>0.10.20-LITE</version>
-    <packaging>jar</packaging>
+    <version>0.11.6</version>
+    <name>IF-Lite for PlayerChannels</name>
+    <description>InventoryFramework classes for PlayerChannels chest menus and paging.</description>
+    <licenses>
+        <license>
+            <name>The Unlicense</name>
+            <url>https://unlicense.org/</url>
+        </license>
+    </licenses>
 
     <properties>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.build.outputTimestamp>2025-12-19T00:00:00Z</project.build.outputTimestamp>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>com.github.stefvanschie.inventoryframework</groupId>
-            <artifactId>IF</artifactId>
-            <version>0.10.20-SNAPSHOT</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.20.3-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-    </dependencies>
-
     <build>
+        <resources>
+            <resource>
+                <directory>${project.basedir}</directory>
+                <includes><include>LICENSE</include></includes>
+                <targetPath>META-INF/IF-Lite</targetPath>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.3.0</version>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.8.1</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
+                        <id>extract-chest-menu-library</id>
+                        <phase>generate-resources</phase>
+                        <goals><goal>unpack</goal></goals>
                         <configuration>
-                            <minimizeJar>true</minimizeJar>
-                            <filters>
-                                <filter>
-                                    <artifact>com.github.stefvanschie.inventoryframework:IF</artifact>
-                                    <includes>
-                                        <!-- Only include the classes you need -->
-                                        <include>com/github/stefvanschie/inventoryframework/gui/GuiItem.class</include>
-                                        <include>com/github/stefvanschie/inventoryframework/gui/type/ChestGui.class</include>
-                                        <include>com/github/stefvanschie/inventoryframework/gui/type/util/Gui.class</include>
-                                        <include>com/github/stefvanschie/inventoryframework/pane/StaticPane.class</include>
-                                        <include>com/github/stefvanschie/inventoryframework/pane/PaginatedPane.class</include>
-                                        <include>com/github/stefvanschie/inventoryframework/pane/Pane.class</include>
-                                        
-                                        <!-- Include supporting classes and their dependencies -->
-                                        <include>com/github/stefvanschie/inventoryframework/gui/InventoryComponent.class</include>
-                                        <include>com/github/stefvanschie/inventoryframework/gui/type/util/**</include>
-                                        <include>com/github/stefvanschie/inventoryframework/pane/util/**</include>
-                                        <include>com/github/stefvanschie/inventoryframework/HumanEntityCache.class</include>
-                                        <include>com/github/stefvanschie/inventoryframework/adventuresupport/**</include>
-                                        <include>com/github/stefvanschie/inventoryframework/util/**</include>
-                                        <include>com/github/stefvanschie/inventoryframework/exception/**</include>
-                                        <include>com/github/stefvanschie/inventoryframework/gui/GuiListener.class</include>
-                                        <include>com/github/stefvanschie/inventoryframework/pane/Flippable.class</include>
-                                        <include>com/github/stefvanschie/inventoryframework/pane/Rotatable.class</include>
-                                        <include>com/github/stefvanschie/inventoryframework/pane/OutlinePane.class</include>
-                                    </includes>
-                                </filter>
-                            </filters>
-                            <relocations>
-                                <relocation>
-                                    <pattern>com.github.stefvanschie.inventoryframework</pattern>
-                                    <shadedPattern>your.package.inventoryframework</shadedPattern>
-                                </relocation>
-                            </relocations>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>${project.groupId}</groupId>
+                                    <artifactId>IF</artifactId>
+                                    <version>${project.version}</version>
+                                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                                    <includes>com/github/stefvanschie/inventoryframework/**/*.class</includes>
+                                    <excludes>com/github/stefvanschie/inventoryframework/nms/**</excludes>
+                                </artifactItem>
+                            </artifactItems>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.4.2</version>
+            </plugin>
         </plugins>
     </build>
-</project> 
+</project>
