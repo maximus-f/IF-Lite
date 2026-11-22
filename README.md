@@ -1,25 +1,30 @@
-# IF-Lite for PlayerChannels
+# IF-Lite 0.12.2
 
-This standalone Maven project packages the parts of InventoryFramework used by PlayerChannels' chest menus, menu clicks and paginated inventories. The build extracts unmodified shared classes from the published upstream JAR, including the inventory-view implementations used before and after Bukkit changed InventoryView to an interface. Specialized inventories that require Minecraft server internals and bundled font resources are outside the scope of this distribution.
+IF-Lite packages the shared chest-menu and paging classes from InventoryFramework for plugins that use Bukkit inventories. The JAR contains 107 unmodified classes from IF 0.12.2, including both inventory-view implementations. It omits the version-specific NMS inventories and bundled font resources. The upstream Unlicense is included.
 
-[Download IF-Lite 0.11.6](IF-Lite-0.11.6.jar) · SHA-256 `81847ebb076d29003a127d9b7a179e88a4ae63197105506b271d2fd3bbe43fb1`
+[Download IF-Lite 0.12.2](IF-Lite-0.12.2.jar) · [Upstream release](https://github.com/stefvanschie/IF/releases/tag/v0.12.2)
 
-The original [extract.sh](extract.sh) targets IF 0.10.19. Use the Maven build below for 0.11.6.
+| Artifact | Bytes | SHA-256 |
+| --- | ---: | --- |
+| IF-Lite 0.12.2 | 296,304 | `d730e41a1728057aaf4e9fe9a772e09d54401cc4f80e10df6625007fbd3e4916` |
+| Upstream IF 0.12.2 | 1,637,926 | `4af4d21cbbbe1ae97c700b2f7ab69b3c1301d0c719481080af829d342d5dcedd` |
 
 ## Build
 
-Use Maven 3.9 and JDK 17. From this directory run:
+With Maven 3.9 and JDK 17, run:
 
 ```sh
 mvn clean verify
 ```
 
-The output is `target/IF-Lite-0.11.6.jar`. Maven resolves upstream IF from Central at build time. Consuming the Lite artifact does not pull the full IF dependency. To update PlayerChannels, copy the built JAR and this POM into the matching version directory under its `vendor/maven`, refresh the SHA-1 and SHA-256 sidecars, and set the IF-Lite version in PlayerChannels' POM. Keep the package relocation in PlayerChannels' shade configuration.
+The build resolves the pinned IF artifact from Maven Central and writes `target/IF-Lite-0.12.2.jar`. The historical [extract.sh](extract.sh) targets IF 0.10.19.
 
-For an upgrade, select the upstream release in this POM, build from a clean target, and run PlayerChannels' menus on each target server version. InventoryFramework's own version detection is preserved.
+## Verification
 
-## Verified integration
+A test plugin running with the Lite JAR built a chest menu with two pages on Paper 1.21.11 build 132 and Paper 26.3 build 253. Both servers rendered the expected book and diamond items in their respective panes. On 1.21.11 a protocol client opened the menu, clicked the book and received the diamond on the second page. The 26.3 check covered server-side rendering only.
 
-On November 21, 2026, PlayerChannels 3.8.2 built from an empty Maven cache with this library and ToastAPI 2.0. The 283,141-byte Lite JAR contains 93 unchanged upstream classes. The 886,892-byte shaded PlayerChannels JAR ran on Paper 1.21.11 build 132 with Java 21. Three test clients exercised channel creation, invitations, joining and leaving, member-only chat delivery, a chest menu click and receipt of the tutorial toast packet.
+## PlayerChannels
 
-[Upstream IF 0.11.6](https://github.com/stefvanschie/IF/releases/tag/v0.11.6) · [License](LICENSE)
+PlayerChannels 3.8.2 uses [IF-Lite 0.11.6](https://github.com/maximus-f/IF-Lite/tree/codex/if-lite-0.11.6). A compile check against the 0.12.2 Lite JAR found API changes in the pane constructors and placement methods. Migration requires supplying pane positions as `Slot` arguments when attaching panes and updating paging calls for the 0.12 API.
+
+[License](LICENSE)
