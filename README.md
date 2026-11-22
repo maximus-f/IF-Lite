@@ -25,6 +25,19 @@ A test plugin running with the Lite JAR built a chest menu with two pages on Pap
 
 ## PlayerChannels
 
-PlayerChannels 3.8.2 uses [IF-Lite 0.11.6](https://github.com/maximus-f/IF-Lite/tree/codex/if-lite-0.11.6). A compile check against the 0.12.2 Lite JAR found API changes in the pane constructors and placement methods. Migration requires supplying pane positions as `Slot` arguments when attaching panes and updating paging calls for the 0.12 API.
+PlayerChannels 3.8.2 downloads `io.github.maximus-f:if-lite:0.12.2` from Maven Central and embeds it in the plugin. Its menus use the 0.12 pane API and have been tested on Paper 1.21.11 and 26.3. See the [menu migration](https://github.com/maximus-f/PlayerChannels/pull/7) and [Maven Central integration](https://github.com/maximus-f/PlayerChannels/pull/8).
 
 [License](LICENSE)
+
+## Maven Central publishing
+
+The public artifact uses `io.github.maximus-f:if-lite:0.12.2`. Its standalone consumer POM is in `central/pom.xml`. The Java packages stay the same. From the repository root, build with the prerequisites above and prepare a signed bundle:
+
+```sh
+mvn clean verify
+python3 central/bundle.py --signing-key YOUR_OPENPGP_FINGERPRINT
+```
+
+Upload the resulting `target/*-central.zip` in the [Central Publisher Portal](https://central.sonatype.com/publishing/deployments), review validation, and publish. The release signer must have a [discoverable public key](https://central.sonatype.org/publish/requirements/gpg/).
+
+To rehearse dependency resolution before publishing, run `python3 central/bundle.py --stage /path/to/test-repository` after the build. This writes the binary, sources, Javadoc, consumer POM and checksums into a fresh version directory using Maven's repository layout.
